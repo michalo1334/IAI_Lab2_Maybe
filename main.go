@@ -9,33 +9,29 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
 var recsys *knn.Knn
 
 func piwaJsonFunc(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json") // Set the Content-Type header
+	w.Header().Set("Content-Type", "application/json")
 
-	// Retrieve 10 random beers from the system
 	tenbeers := recsys.Get10RandomBeers()
 
-	// Convert the beers slice to JSON
 	data, err := json.Marshal(tenbeers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Write the JSON data to the response
 	w.Write(data)
 }
 
 func piwaFunc(w http.ResponseWriter, r *http.Request) {
-	// Retrieve 10 random beers from the system
 	tenbeers := recsys.Get10RandomBeers()
 
-	// Parse and execute the template with the 10 random beers
 	tmpl, err := template.ParseFiles("pages/beer.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -48,12 +44,10 @@ func piwaFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 func rekoFunc(w http.ResponseWriter, r *http.Request) {
-	// gdy metoda inna niż POST - error 403
 	if r.Method != "POST" {
 		http.Error(w, "Only POST supported", http.StatusForbidden)
 		return
 	}
-	// parsowanie danych z formularza
 	r.ParseForm()
 	// iteracja danych z formularza i jednoczesna ocena piw
 	for name, element := range r.PostForm {
@@ -72,18 +66,51 @@ func rekoFunc(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, recbeers)
 }
 
+func piwoJsonFunc(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.Trim(r.URL.Path, "/pid")
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Nieprawidłowe id piwa", http.StatusBadRequest)
+		return
+	}
+
+	beer := recsys.GetBeerByID(id)
+	if beer == nil {
+		http.Error(w, "Nie znaleziono piwa", http.StatusNotFound)
+		return
+	}
+
+	similarBeers := recsys.GetThreeMostSimilarBeers(beer)
+
+	// Prepare the response data
+	response := struct {
+		Beer         *knn.Beer   `json:"beer"`
+		SimilarBeers []*knn.Beer `json:"similar_beers"`
+	}{
+		Beer:         beer,
+		SimilarBeers: similarBeers,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	// Marshal the response data to JSON
+	data, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(data)
+}
+
 func main() {
-	// These lines should remain
 	rand.Seed(time.Now().UnixMilli())
 	recsys = knn.Initialize()
 
-	// Comment out or remove the code below
-	// ...
-
-	// Set up the HTTP server
 	http.HandleFunc("/piwa", piwaFunc)
 	http.HandleFunc("/piwajson", piwaJsonFunc)
 	http.HandleFunc("/reko", rekoFunc)
+	http.HandleFunc("/pid/", piwoJsonFunc)
 	fmt.Println("Starting server at :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
