@@ -33,6 +33,7 @@
                     <th>IBU</th>
                     <th>Ocena</th>
                     <th>Estymowana Ocena</th>
+                    <th>Styl</th>
                     <th>Twoja Ocena</th>
                 </tr>
             </thead>
@@ -46,6 +47,7 @@
                     <td>{{printf "%.2f" .Ibu}}</td>
                     <td>{{printf "%.2f" .Rate}}</td>
                     <td>{{printf "%.2f" .Estim}}</td>
+                    <td>{{.StyleName}}</td>
                     <td>
                         <!-- Select element for user rating -->
                         <select name="piwo{{.Id}}">

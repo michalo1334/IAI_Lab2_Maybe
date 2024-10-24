@@ -9,15 +9,18 @@ import (
 	"strings"
 )
 
+// beer.go
+
 type Beer struct {
-	Id    int     `json:"id"`   // id piwa
-	Abv   float64 `json:"abv"`  // poziom abv
-	Ibu   float64 `json:"ibu"`  // goryczka
-	Style int     `json:"-"`    // styl (nie zwracane)
-	Name  string  `json:"name"` // nazwa
-	Rate  float64 `json:"-"`    // ocena (nie zwracane)
-	Estim float64 `json:"-"`    // estymowana ocena (nie zwracane)
-	Simi  float64 `json:"-"`    // nie zwracane
+	Id        int     `json:"id"`
+	Abv       float64 `json:"abv"`
+	Ibu       float64 `json:"ibu"`
+	Style     int     `json:"-"`
+	Name      string  `json:"name"`
+	Rate      float64 `json:"-"`
+	Estim     float64 `json:"-"`
+	Simi      float64 `json:"-"`
+	StyleName string  `json:"style_name,omitempty"`
 }
 
 type Beers struct {
@@ -69,7 +72,7 @@ func LoadBeers(name string) *Beers {
 			continue
 		}
 		styleId := b.styles.CheckStyle(style)
-		b.beers = append(b.beers, Beer{id, abv, ibu, styleId, name, 0, 0, 0})
+		b.beers = append(b.beers, Beer{id, abv, ibu, styleId, name, 0, 0, 0, ""})
 	}
 	return &b
 }

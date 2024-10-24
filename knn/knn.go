@@ -20,14 +20,18 @@ func (k *Knn) GetStyles() *Styles {
 
 func (k *Knn) GetRandomBeer() *Beer {
 	index := rand.Intn(len(k.beers.beers))
-	return &k.beers.beers[index]
+	b := k.beers.beers[index]
+	b.StyleName = k.GetStyleName(k.beers.beers[index].Style)
+	return &b
 }
 
 func (k *Knn) Get10RandomBeers() []*Beer {
 	beers := []*Beer{}
 	for i := 0; i < 10; i++ {
 		index := rand.Intn(len(k.beers.beers))
-		beers = append(beers, &k.beers.beers[index])
+		b := k.beers.beers[index]
+		b.StyleName = k.GetStyleName(k.beers.beers[index].Style)
+		beers = append(beers, &b)
 	}
 	return beers
 }
@@ -35,6 +39,7 @@ func (k *Knn) Get10RandomBeers() []*Beer {
 func (k *Knn) GetBeerByID(id int) *Beer {
 	for b := range k.beers.beers {
 		if k.beers.beers[b].Id == id {
+			k.beers.beers[b].StyleName = k.GetStyleName(k.beers.beers[b].Style)
 			return &k.beers.beers[b]
 		}
 	}
