@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"lab0302/knn"
@@ -12,6 +13,23 @@ import (
 )
 
 var recsys *knn.Knn
+
+func piwaJsonFunc(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json") // Set the Content-Type header
+
+	// Retrieve 10 random beers from the system
+	tenbeers := recsys.Get10RandomBeers()
+
+	// Convert the beers slice to JSON
+	data, err := json.Marshal(tenbeers)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Write the JSON data to the response
+	w.Write(data)
+}
 
 func piwaFunc(w http.ResponseWriter, r *http.Request) {
 	// Retrieve 10 random beers from the system
@@ -64,6 +82,7 @@ func main() {
 
 	// Set up the HTTP server
 	http.HandleFunc("/piwa", piwaFunc)
+	http.HandleFunc("/piwajson", piwaJsonFunc)
 	http.HandleFunc("/reko", rekoFunc)
 	fmt.Println("Starting server at :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
