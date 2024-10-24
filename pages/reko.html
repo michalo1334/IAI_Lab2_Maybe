@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rekomendowane Piwa</title>
+    <style>
+        /* Existing styles from beer.html */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        tr:hover {background-color: #f5f5f5;}
+        /* Additional styles if needed */
+    </style>
+</head>
+<body>
+    <h1>Rekomendowane Piwa</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nazwa</th>
+                <th>Styl</th>
+                <th>ABV (%)</th>
+                <th>IBU</th>
+                <th>Ocena</th>
+                <th>Estymowana Ocena</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .}}
+            <tr>
+                <td>{{.Id}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.Style}}</td>
+                <td>{{printf "%.2f" .Abv}}</td>
+                <td>{{printf "%.2f" .Ibu}}</td>
+                <td>{{printf "%.2f" .Rate}}</td>
+                <td>{{printf "%.2f" .Estim}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    <!-- Link back to /piwa/ -->
+    <p><a href="/piwa">Powrót do strony oceniania piw</a></p>
+</body>
+</html>

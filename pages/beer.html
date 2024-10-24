@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Oceń Piwa</title>
+    <style>
+        /* Existing styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        tr:hover {background-color: #f5f5f5;}
+    </style>
+</head>
+<body>
+    <h1>Oceń Piwa</h1>
+    <!-- Begin form -->
+    <form method="POST" action="/reko">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nazwa</th>
+                    <th>Styl</th>
+                    <th>ABV (%)</th>
+                    <th>IBU</th>
+                    <th>Ocena</th>
+                    <th>Estymowana Ocena</th>
+                    <th>Twoja Ocena</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .}}
+                <tr>
+                    <td>{{.Id}}</td>
+                    <td>{{.Name}}</td>
+                    <td>{{.Style}}</td>
+                    <td>{{printf "%.2f" .Abv}}</td>
+                    <td>{{printf "%.2f" .Ibu}}</td>
+                    <td>{{printf "%.2f" .Rate}}</td>
+                    <td>{{printf "%.2f" .Estim}}</td>
+                    <td>
+                        <!-- Select element for user rating -->
+                        <select name="piwo{{.Id}}">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        <!-- Submit button -->
+        <input type="submit" value="Wyślij Oceny">
+    </form>
+    <!-- End form -->
+</body>
+</html>
